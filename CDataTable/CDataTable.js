@@ -1,16 +1,16 @@
 import React, { useState, useRef, useMemo, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import classNames from 'classnames'
-import CPagination from '../pagination/CPagination'
-import CElementCover from '../element-cover/CElementCover'
+import CPaginationV3 from '../CPaginationV3/CPaginationV3'
 import CIcon from '@coreui/icons-react'
 import { cilArrowTop, cilBan, cilFilterX } from '@coreui/icons'
 import style from './CDataTable.module.css'
 import './CDataTable.css'
 
+// prettier-ignore
+/* eslint-disable react-hooks/exhaustive-deps */
 //component - CoreUI / CTable
-const CDataTable = props => {
-
+const CDataTable = (props) => {
   const {
     //
     innerRef,
@@ -58,12 +58,10 @@ const CDataTable = props => {
     onPagesChange,
     onTableFilterChange,
     onPageChange,
-    onFilteredItemsChange
+    onFilteredItemsChange,
   } = props
 
-  const compData = useRef(
-    { firstRun: true, columnFiltered: 0, changeItems: 0 }).current
-
+  const compData = useRef({ firstRun: true, columnFiltered: 0, changeItems: 0 }).current
 
   //
   const [perPageItems, setPerPageItems] = useState(itemsPerPage)
@@ -86,44 +84,47 @@ const CDataTable = props => {
     return classes
   }
 
-  const pretifyName = (name)=>{
-    return name.replace(/[-_.]/g, ' ')
+  const pretifyName = (name) => {
+    return name
+      .replace(/[-_.]/g, ' ')
       .replace(/ +/g, ' ')
       .replace(/([a-z0-9])([A-Z])/g, '$1 $2')
       .split(' ')
-      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
       .join(' ')
   }
 
-  const headerClass = i => fields && fields[i]._classes && fields[i]._classes
+  const headerClass = (i) => fields && fields[i]._classes && fields[i]._classes
 
-  const isSortable = i => {
+  const isSortable = (i) => {
     const isDataColumn = itemsDataColumns.includes(rawColumnNames[i])
-    return sorter && (!fields || fields[i].sorter !== false) && isDataColumn 
+    return sorter && (!fields || fields[i].sorter !== false) && isDataColumn
   }
 
   const headerStyles = (index) => {
     let style = { verticalAlign: 'middle', overflow: 'hidden' }
     if (isSortable(index)) {
-      style.cursor='pointer'
+      style.cursor = 'pointer'
     }
     if (fields && fields[index] && fields[index]._style) {
-      return {...style, ...fields[index]._style}
+      return { ...style, ...fields[index]._style }
     }
     return style
   }
 
-  const getIconState = index => {
+  const getIconState = (index) => {
     const direction = sorterState.asc ? 'asc' : 'desc'
     return rawColumnNames[index] === sorterState.column ? direction : 0
   }
 
-  const iconClasses = index => {
+  const iconClasses = (index) => {
     const state = getIconState(index)
     return [
-      'position-absolute', style['icon-transition'], style['arrow-position'],
+      'position-absolute',
+      style['icon-transition'],
+      style['arrow-position'],
       !state && style['transparent'],
-      state === 'desc' && style['rotate-icon']
+      state === 'desc' && style['rotate-icon'],
     ]
   }
 
@@ -144,24 +145,24 @@ const CDataTable = props => {
       state.column = columnRepeated && state.asc === false ? null : column
     }
     state.asc = !(columnRepeated && state.asc)
-    setSorterState({...state})
+    setSorterState({ ...state })
   }
 
   useEffect(() => {
     onSorterValueChange && onSorterValueChange(sorterState)
   }, [JSON.stringify(sorterState)])
 
-  const paginationChange = e => {
+  const paginationChange = (e) => {
     onPaginationChange && onPaginationChange(Number(e.target.value))
     !itemsPerPageSelect.external && setPerPageItems(Number(e.target.value))
   }
 
-  const columnFilterEvent = (colName, value, type)=>{
+  const columnFilterEvent = (colName, value, type) => {
     const isLazy = columnFilter && columnFilter.lazy === true
-    if (isLazy && type === 'input' || !isLazy && type === 'change') {
+    if ((isLazy && type === 'input') || (!isLazy && type === 'change')) {
       return
     }
-    const newState = {...columnFilterState, [`${colName}`]: value }
+    const newState = { ...columnFilterState, [`${colName}`]: value }
     setColumnFilterState(newState)
   }
 
@@ -171,7 +172,7 @@ const CDataTable = props => {
 
   const tableFilterChange = (value, type) => {
     const isLazy = tableFilter && tableFilter.lazy === true
-    if (isLazy && type === 'input' || !isLazy && type === 'change') {
+    if ((isLazy && type === 'input') || (!isLazy && type === 'change')) {
       return
     }
     setTableFilterState(value)
@@ -186,7 +187,7 @@ const CDataTable = props => {
       return 'details'
     } else {
       const children = Array.from(e.target.closest('tr').children)
-      const clickedCell = children.filter(child => child.contains(e.target))[0]
+      const clickedCell = children.filter((child) => child.contains(e.target))[0]
       return rawColumnNames[children.indexOf(clickedCell)]
     }
   }
@@ -195,18 +196,18 @@ const CDataTable = props => {
     setTableFilterState('')
     setColumnFilterState({})
     setSorterState({
-      column: "",
-      asc: true
+      column: '',
+      asc: true,
     })
   }
 
   // computed
 
-  const genCols = Object.keys(passedItems[0] || {}).filter(el => el.charAt(0) !== '_')
+  const genCols = Object.keys(passedItems[0] || {}).filter((el) => el.charAt(0) !== '_')
 
-  const rawColumnNames = fields ? fields.map(el => el.key || el) : genCols
+  const rawColumnNames = fields ? fields.map((el) => el.key || el) : genCols
 
-  const itemsDataColumns = rawColumnNames.filter(name => genCols.includes(name))
+  const itemsDataColumns = rawColumnNames.filter((name) => genCols.includes(name))
 
   useMemo(() => {
     compData.columnFiltered++
@@ -214,10 +215,10 @@ const CDataTable = props => {
     JSON.stringify(columnFilter),
     JSON.stringify(columnFilterState),
     itemsDataColumns.join(''),
-    compData.changeItems
+    compData.changeItems,
   ])
 
-  const columnFiltered = useMemo(()=>{
+  const columnFiltered = useMemo(() => {
     let items = passedItems
     if (columnFilter && columnFilter.external) {
       return items
@@ -225,7 +226,7 @@ const CDataTable = props => {
     Object.entries(columnFilterState).forEach(([key, value]) => {
       const columnFilter = String(value).toLowerCase()
       if (columnFilter && itemsDataColumns.includes(key)) {
-        items = items.filter(item => {
+        items = items.filter((item) => {
           return String(item[key]).toLowerCase().includes(columnFilter)
         })
       }
@@ -233,23 +234,19 @@ const CDataTable = props => {
     return items
   }, [compData.columnFiltered])
 
-  const tableFiltered = useMemo(()=>{
+  const tableFiltered = useMemo(() => {
     let items = columnFiltered
     if (!tableFilterState || (tableFilter && tableFilter.external)) {
       return items
     }
     const filter = tableFilterState.toLowerCase()
-    const valueContainFilter = val => String(val).toLowerCase().includes(filter)
-    items = items.filter(item => {
-      return !!itemsDataColumns.find(key => valueContainFilter(item[key]))
+    const valueContainFilter = (val) => String(val).toLowerCase().includes(filter)
+    items = items.filter((item) => {
+      return !!itemsDataColumns.find((key) => valueContainFilter(item[key]))
     })
     return items
-  }, [
-    compData.columnFiltered,
-    tableFilterState,
-    JSON.stringify(tableFilter)
-  ])
-  
+  }, [compData.columnFiltered, tableFilterState, JSON.stringify(tableFilter)])
+
   const sortedItems = useMemo(() => {
     const col = sorterState.column
     if (!col || !itemsDataColumns.includes(col) || (sorter && sorter.external)) {
@@ -265,11 +262,7 @@ const CDataTable = props => {
       return a > b ? 1 * flip : b > a ? -1 * flip : 0
     })
     return sorted
-  }, [
-    JSON.stringify(tableFiltered), 
-    JSON.stringify(sorterState), 
-    JSON.stringify(sorter)
-  ])
+  }, [JSON.stringify(tableFiltered), JSON.stringify(sorterState), JSON.stringify(sorter)])
 
   useEffect(() => {
     !compData.firstRun && onFilteredItemsChange && onFilteredItemsChange(sortedItems)
@@ -283,26 +276,25 @@ const CDataTable = props => {
       'table-striped': striped,
       'table-hover': hover,
       'table-bordered': border,
-      'border': outlined
+      'border': outlined,
     },
-    addTableClasses
+    addTableClasses,
   ]
-
 
   const columnNames = useMemo(() => {
     if (fields) {
-      return fields.map(f => {
+      return fields.map((f) => {
         return f.label !== undefined ? f.label : pretifyName(f.key || f)
       })
     }
-    return rawColumnNames.map(el => pretifyName(el))
+    return rawColumnNames.map((el) => pretifyName(el))
   }, [fields, rawColumnNames])
 
   const sortingIconStyles = sorter && 'position-relative pr-4'
 
   const colspan = rawColumnNames.length
 
-  const totalPages = Math.ceil((sortedItems.length) / perPageItems) || 1
+  const totalPages = Math.ceil(sortedItems.length / perPageItems) || 1
   useMemo(() => {
     !compData.firstRun && onPagesChange && onPagesChange(totalPages)
   }, [totalPages])
@@ -315,20 +307,17 @@ const CDataTable = props => {
 
   const firstItemIndex = (computedPage - 1) * perPageItems || 0
 
-  const paginatedItems = sortedItems.slice(
-    firstItemIndex,
-    firstItemIndex + perPageItems
-  )
+  const paginatedItems = sortedItems.slice(firstItemIndex, firstItemIndex + perPageItems)
   const currentItems = computedPage ? paginatedItems : sortedItems
 
   const tableFilterData = {
     label: (tableFilter && tableFilter.label) || 'Filter:',
-    placeholder: (tableFilter && tableFilter.placeholder) || 'type string...'
+    placeholder: (tableFilter && tableFilter.placeholder) || 'type string...',
   }
 
   const paginationSelect = {
     label: (itemsPerPageSelect && itemsPerPageSelect.label) || 'Items per page:',
-    values: (itemsPerPageSelect && itemsPerPageSelect.values) || [5, 10, 20, 50]
+    values: (itemsPerPageSelect && itemsPerPageSelect.values) || [5, 10, 20, 50],
   }
 
   const noItemsText = (() => {
@@ -339,12 +328,12 @@ const CDataTable = props => {
     return customValues.noItems || 'No items'
   })()
 
-  const isFiltered = tableFilterState || sorterState.column ||
-                     Object.values(columnFilterState).join('')   
+  const isFiltered =
+    tableFilterState || sorterState.column || Object.values(columnFilterState).join('')
 
   const cleanerProps = {
-    content: cilFilterX,
-    className: `mfs-2 ${isFiltered ? 'text-danger' : 'transparent'}`,
+    icon: cilFilterX,
+    className: `ms-2 ${isFiltered ? 'text-danger' : 'transparent'}`,
     role: isFiltered ? 'button' : null,
     tabIndex: isFiltered ? 0 : null,
   }
@@ -356,22 +345,19 @@ const CDataTable = props => {
 
   useMemo(() => setTableFilterState(tableFilterValue), [tableFilterValue])
 
-  useMemo(() => setColumnFilterState({...columnFilterValue}), [columnFilterValue])
+  useMemo(() => setColumnFilterState({ ...columnFilterValue }), [columnFilterValue])
 
   //items
   useMemo(() => {
     if (
       items &&
       !compData.firstRun &&
-      (items.length !== passedItems.length ||
-      JSON.stringify(items) !== JSON.stringify(passedItems))
+      (items.length !== passedItems.length || JSON.stringify(items) !== JSON.stringify(passedItems))
     ) {
       setPassedItems(items)
       compData.changeItems++
     }
   })
-
-
 
   // render
   compData.firstRun = false
@@ -379,12 +365,13 @@ const CDataTable = props => {
   const paginationProps = typeof pagination === 'object' ? pagination : null
 
   const headerContent = (
-  <tr>
-    {
-      columnNames.map((name, index)=>{
+    <tr>
+      {columnNames.map((name, index) => {
         return (
           <th
-            onClick={()=>{changeSort(rawColumnNames[index], index)}}
+            onClick={() => {
+              changeSort(rawColumnNames[index], index)
+            }}
             className={classNames([headerClass(index), sortingIconStyles])}
             style={headerStyles(index)}
             key={index}
@@ -396,9 +383,9 @@ const CDataTable = props => {
               isSortable(index) &&
               ((sortingIconSlot && sortingIconSlot(getIconState(index), iconClasses(index))) ||
               <CIcon
-                customClasses={classNames(iconClasses(index))}
+                customClassName={classNames(iconClasses(index))}
                 width={18}
-                content={cilArrowTop}
+                icon={cilArrowTop}
               />)
             }
           </th>
@@ -408,195 +395,187 @@ const CDataTable = props => {
   </tr>)
 
   return (
-<React.Fragment>
-<div ref={innerRef}>
-  {
-    (itemsPerPageSelect || tableFilter || cleaner) &&
-    <div className="row my-2 mx-0">
+    <React.Fragment>
+    <div ref={innerRef}>
       {
-        (tableFilter || cleaner) &&
-        <div className="col-sm-6 form-inline p-0 c-datatable-filter">
+        (itemsPerPageSelect || tableFilter || cleaner) &&
+        <div className="row my-2 mx-0">
           {
-            tableFilter &&
-            <>
-              <label className="mfe-2">{tableFilterData.label}</label>
-              <input
-                className="form-control"
-                type="text"
-                placeholder={tableFilterData.placeholder}
-                onInput={(e)=>{tableFilterChange(e.target.value, 'input')}}
-                onChange={(e)=>{tableFilterChange(e.target.value, 'change')}}
-                value={tableFilterState || ''}
-                aria-label="table filter input"
-              />
-            </>
-          }
-          {
-            cleaner && (
-              typeof cleaner === 'function' ? cleaner(clean, isFiltered, cleanerProps) :
-              <CIcon
-                {...cleanerProps}
-                onClick={clean}
-                onKeyUp={(event) => { if (event.key === 'Enter') clean() }}
-              />
-            )
-          }
-          
-        </div>
-      }
-      {
-        itemsPerPageSelect &&
-        <div className={`col-sm-6 p-0 ${(tableFilter || cleaner) ? '' : 'offset-sm-6'}`}>
-          <div className="form-inline justify-content-sm-end c-datatable-items-per-page">
-            <label className="mfe-2">{paginationSelect.label}</label>
-            <select
-              className="form-control"
-              onChange={paginationChange}
-              aria-label="changes number of visible items"
-              value={perPageItems}
-            >
-              { paginationSelect.values.map((number, key)=>{
-                return (
-                  <option
-                    val={number}
-                    key={key}
-                  >
-                    {number}
-                  </option>
+            (tableFilter || cleaner) &&
+            <div className="col-sm-6 form-inline p-0 c-datatable-filter">
+              {
+                tableFilter &&
+                <>
+                  <label className="me-2">{tableFilterData.label}</label>
+                  <input
+                    className="form-control"
+                    type="text"
+                    placeholder={tableFilterData.placeholder}
+                    onInput={(e)=>{tableFilterChange(e.target.value, 'input')}}
+                    onChange={(e)=>{tableFilterChange(e.target.value, 'change')}}
+                    value={tableFilterState || ''}
+                    aria-label="table filter input"
+                  />
+                </>
+              }
+              {
+                cleaner && (
+                  typeof cleaner === 'function' ? cleaner(clean, isFiltered, cleanerProps) :
+                  <CIcon
+                    {...cleanerProps}
+                    onClick={clean}
+                    onKeyUp={(event) => { if (event.key === 'Enter') clean() }}
+                  />
                 )
-              })}
-            </select>
-          </div>
+              }
+            </div>
+          }
+          {
+            itemsPerPageSelect &&
+            <div className={`col-sm-6 p-0 ${(tableFilter || cleaner) ? '' : 'offset-sm-6'}`}>
+              <div className="form-inline justify-content-sm-end c-datatable-items-per-page">
+                <label className="me-2">{paginationSelect.label}</label>
+                <select
+                  className="form-control"
+                  onChange={paginationChange}
+                  aria-label="changes number of visible items"
+                  value={perPageItems}
+                >
+                  { paginationSelect.values.map((number, key)=>{
+                    return (
+                      <option
+                        val={number}
+                        key={key}
+                      >
+                        {number}
+                      </option>
+                    )
+                  })}
+                </select>
+              </div>
+            </div>
+          }
         </div>
       }
     </div>
-  }
-</div>
 
-{ overTableSlot }
+    { overTableSlot }
 
-<div className={`position-relative ${responsive && 'table-responsive' }`}>
-  <table className={classNames(tableClasses)}>
-    <thead>
-      { theadTopSlot }
-      { header && headerContent }
-      {
-        columnFilter && <tr className="table-sm">
+    <div className={`position-relative ${responsive && 'table-responsive' }`}>
+      <table className={classNames(tableClasses)}>
+        <thead>
+          { theadTopSlot }
+          { header && headerContent }
           {
-            rawColumnNames.map((colName, index)=>{
-              return (
-                <th className={classNames(headerClass(index))} key={index}>
-                  { columnFilterSlot[`${rawColumnNames[index]}`] ||
-                    ( (!fields || fields[index].filter !== false) &&
-                      <input
-                        className="form-control form-control-sm"
-                        onInput={e=>{columnFilterEvent(colName, e.target.value, 'input')}}
-                        onChange={e=>{columnFilterEvent(colName, e.target.value, 'change')}}
-                        value={columnFilterState[colName] || ''}
-                        aria-label={`column name: '${colName}' filter input`}
-                      />)
-                  }
-                </th>
-              )
-            })
-          }
-        </tr>
-      }
-    </thead>
-    <tbody style={clickableRows && { cursor: 'pointer' }}>
-      { currentItems.map((item, itemIndex) => {
-        return (
-          <React.Fragment key={itemIndex}>
-          <tr
-            className={classNames(item._classes)}
-            tabIndex={clickableRows && 0}
-            onClick={(e)=>{rowClicked(item, itemIndex + firstItemIndex, e)}}
-          >
-            {
-              rawColumnNames.map((colName, index)=>{
-                return (
-                  scopedSlots[colName] &&
-                  React.cloneElement(
-                    scopedSlots[colName](item, itemIndex + firstItemIndex),
-                    {'key': index}
+            columnFilter && <tr className="table-sm">
+              {
+                rawColumnNames.map((colName, index)=>{
+                  return (
+                    <th className={classNames(headerClass(index))} key={index}>
+                      { columnFilterSlot[`${rawColumnNames[index]}`] ||
+                        ( (!fields || fields[index].filter !== false) &&
+                          <input
+                            className="form-control form-control-sm"
+                            onInput={e=>{columnFilterEvent(colName, e.target.value, 'input')}}
+                            onChange={e=>{columnFilterEvent(colName, e.target.value, 'change')}}
+                            value={columnFilterState[colName] || ''}
+                            aria-label={`column name: '${colName}' filter input`}
+                          />)
+                      }
+                    </th>
                   )
-                ) ||
-                <td
-                  className={classNames(cellClass(item, colName, index))}
-                  key={index}
-                >
-                  { String(item[colName]) }
-                </td>
-              })
-            }
-          </tr>
-          {
-            scopedSlots.details &&
-            <tr
-              onClick={(e)=>{rowClicked(item, itemIndex + firstItemIndex, e, true)}}
-              className="p-0"
-              style={{border: 'none !important'}}
-              key={'details' + itemIndex}
-            >
-              <td
-                colSpan={colspan}
-                className="p-0"
-                style={{border: 'none !important'}}
+                })
+              }
+            </tr>
+          }
+        </thead>
+        <tbody style={clickableRows && { cursor: 'pointer' }}>
+          { currentItems.map((item, itemIndex) => {
+            return (
+              <React.Fragment key={itemIndex}>
+              <tr
+                className={classNames(item._classes)}
+                tabIndex={clickableRows && 0}
+                onClick={(e)=>{rowClicked(item, itemIndex + firstItemIndex, e)}}
               >
-                { scopedSlots.details(item, itemIndex + firstItemIndex) }
+                {
+                  rawColumnNames.map((colName, index)=>{
+                    return (
+                      scopedSlots[colName] &&
+                      React.cloneElement(
+                        scopedSlots[colName](item, itemIndex + firstItemIndex),
+                        {'key': index}
+                      )
+                    ) ||
+                    <td
+                      className={classNames(cellClass(item, colName, index))}
+                      key={index}
+                    >
+                      { String(item[colName]) }
+                    </td>
+                  })
+                }
+              </tr>
+              {
+                scopedSlots.details &&
+                <tr
+                  onClick={(e)=>{rowClicked(item, itemIndex + firstItemIndex, e, true)}}
+                  className="p-0"
+                  style={{border: 'none !important'}}
+                  key={'details' + itemIndex}
+                >
+                  <td
+                    colSpan={colspan}
+                    className="p-0"
+                    style={{border: 'none !important'}}
+                  >
+                    { scopedSlots.details(item, itemIndex + firstItemIndex) }
+                  </td>
+                </tr>
+              }
+              </React.Fragment>
+            )
+          })}
+          {
+            !currentItems.length &&
+            <tr>
+              <td colSpan={colspan}>
+                { noItemsViewSlot ||
+                  <div className="text-center my-5">
+                    <h2>
+                      { noItemsText + ' ' }
+                      <CIcon
+                        width={30}
+                        icon={cilBan}
+                        className="text-danger"
+                      />
+                    </h2>
+                  </div>}
               </td>
             </tr>
           }
-          </React.Fragment>
-        )
-      })}
-      {
-        !currentItems.length &&
-        <tr>
-          <td colSpan={colspan}>
-            { noItemsViewSlot ||
-              <div className="text-center my-5">
-                <h2>
-                  { noItemsText + ' ' }
-                  <CIcon
-                    width="30"
-                    name="cilBan"
-                    content={cilBan}
-                    className="text-danger mb-2"
-                  />
-                </h2>
-              </div>}
-          </td>
-        </tr>
+        </tbody>
+        { footer && currentItems.length > 0 && <tfoot>{headerContent}</tfoot>}
+        { footerSlot }
+        { captionSlot }
+      </table>
+      { loading &&
+        loadingSlot
       }
-    </tbody>
-    { footer && currentItems.length > 0 && <tfoot>{headerContent}</tfoot>}
-    { footerSlot }
-    { captionSlot }
-  </table>
-  { loading && 
-    (loadingSlot || 
-    <CElementCover 
-      boundaries={[
-        { sides: ['top'], query: 'td' },
-        { sides: ['bottom'], query: 'tbody' }
-      ]}
-    />)
-  }
-</div>
+    </div>
 
-{ underTableSlot }
+    { underTableSlot }
 
-{ pagination &&
-  <CPagination
-    style={{display: totalPages > 1 ? 'inline' : 'none'}}
-    onActivePageChange={(page) => { setPage(page) }}
-    pages={totalPages}
-    activePage={page}
-    {...paginationProps}
-  />
-}
-</React.Fragment>
+    { pagination &&
+      <CPaginationV3
+        style={{display: totalPages > 1 ? 'inline' : 'none'}}
+        onActivePageChange={(page) => { setPage(page) }}
+        pages={totalPages}
+        activePage={page}
+        {...paginationProps}
+      />
+    }
+    </React.Fragment>
   )
 }
 
@@ -647,7 +626,7 @@ CDataTable.propTypes = {
   onPagesChange: PropTypes.func,
   onTableFilterChange: PropTypes.func,
   onPageChange: PropTypes.func,
-  onFilteredItemsChange: PropTypes.func
+  onFilteredItemsChange: PropTypes.func,
 }
 
 CDataTable.defaultProps = {
@@ -657,7 +636,7 @@ CDataTable.defaultProps = {
   columnFilterSlot: {},
   scopedSlots: {},
   sorterValue: {},
-  header: true
+  header: true,
 }
 
 export default CDataTable
