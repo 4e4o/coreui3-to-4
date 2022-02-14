@@ -7,7 +7,6 @@ import { cilArrowTop, cilBan, cilFilterX } from '@coreui/icons'
 import style from './CDataTable.module.css'
 import './CDataTable.css'
 
-// prettier-ignore
 /* eslint-disable react-hooks/exhaustive-deps */
 //component - CoreUI / CTable
 const CDataTable = (props) => {
@@ -276,7 +275,7 @@ const CDataTable = (props) => {
       'table-striped': striped,
       'table-hover': hover,
       'table-bordered': border,
-      'border': outlined,
+      border: outlined,
     },
     addTableClasses,
   ]
@@ -376,205 +375,194 @@ const CDataTable = (props) => {
             style={headerStyles(index)}
             key={index}
           >
-            { columnHeaderSlot[`${rawColumnNames[index]}`] ||
-              <div className="d-inline">{name}</div>
-            }
-            {
-              isSortable(index) &&
-              ((sortingIconSlot && sortingIconSlot(getIconState(index), iconClasses(index))) ||
-              <CIcon
-                customClassName={classNames(iconClasses(index))}
-                width={18}
-                icon={cilArrowTop}
-              />)
-            }
+            {columnHeaderSlot[`${rawColumnNames[index]}`] || <div className="d-inline">{name}</div>}
+            {isSortable(index) &&
+              ((sortingIconSlot && sortingIconSlot(getIconState(index), iconClasses(index))) || (
+                <CIcon
+                  customClassName={classNames(iconClasses(index))}
+                  width={18}
+                  icon={cilArrowTop}
+                />
+              ))}
           </th>
         )
-      })
-    }
-  </tr>)
+      })}
+    </tr>
+  )
 
   return (
     <React.Fragment>
-    <div ref={innerRef}>
-      {
-        (itemsPerPageSelect || tableFilter || cleaner) &&
-        <div className="row my-2 mx-0">
-          {
-            (tableFilter || cleaner) &&
-            <div className="col-sm-6 form-inline p-0 c-datatable-filter">
-              {
-                tableFilter &&
-                <>
-                  <label className="me-2">{tableFilterData.label}</label>
-                  <input
-                    className="form-control"
-                    type="text"
-                    placeholder={tableFilterData.placeholder}
-                    onInput={(e)=>{tableFilterChange(e.target.value, 'input')}}
-                    onChange={(e)=>{tableFilterChange(e.target.value, 'change')}}
-                    value={tableFilterState || ''}
-                    aria-label="table filter input"
-                  />
-                </>
-              }
-              {
-                cleaner && (
-                  typeof cleaner === 'function' ? cleaner(clean, isFiltered, cleanerProps) :
-                  <CIcon
-                    {...cleanerProps}
-                    onClick={clean}
-                    onKeyUp={(event) => { if (event.key === 'Enter') clean() }}
-                  />
-                )
-              }
-            </div>
-          }
-          {
-            itemsPerPageSelect &&
-            <div className={`col-sm-6 p-0 ${(tableFilter || cleaner) ? '' : 'offset-sm-6'}`}>
-              <div className="form-inline justify-content-sm-end c-datatable-items-per-page">
-                <label className="me-2">{paginationSelect.label}</label>
-                <select
-                  className="form-control"
-                  onChange={paginationChange}
-                  aria-label="changes number of visible items"
-                  value={perPageItems}
-                >
-                  { paginationSelect.values.map((number, key)=>{
-                    return (
-                      <option
-                        val={number}
-                        key={key}
-                      >
-                        {number}
-                      </option>
-                    )
-                  })}
-                </select>
+      <div ref={innerRef}>
+        {(itemsPerPageSelect || tableFilter || cleaner) && (
+          <div className="row my-2 mx-0">
+            {(tableFilter || cleaner) && (
+              <div className="col-sm-6 form-inline p-0 c-datatable-filter">
+                {tableFilter && (
+                  <>
+                    <label className="me-2">{tableFilterData.label}</label>
+                    <input
+                      className="form-control"
+                      type="text"
+                      placeholder={tableFilterData.placeholder}
+                      onInput={(e) => {
+                        tableFilterChange(e.target.value, 'input')
+                      }}
+                      onChange={(e) => {
+                        tableFilterChange(e.target.value, 'change')
+                      }}
+                      value={tableFilterState || ''}
+                      aria-label="table filter input"
+                    />
+                  </>
+                )}
+                {cleaner &&
+                  (typeof cleaner === 'function' ? (
+                    cleaner(clean, isFiltered, cleanerProps)
+                  ) : (
+                    <CIcon
+                      {...cleanerProps}
+                      onClick={clean}
+                      onKeyUp={(event) => {
+                        if (event.key === 'Enter') clean()
+                      }}
+                    />
+                  ))}
               </div>
-            </div>
-          }
-        </div>
-      }
-    </div>
+            )}
+            {itemsPerPageSelect && (
+              <div className={`col-sm-6 p-0 ${tableFilter || cleaner ? '' : 'offset-sm-6'}`}>
+                <div className="form-inline justify-content-sm-end c-datatable-items-per-page">
+                  <label className="me-2">{paginationSelect.label}</label>
+                  <select
+                    className="form-control"
+                    onChange={paginationChange}
+                    aria-label="changes number of visible items"
+                    value={perPageItems}
+                  >
+                    {paginationSelect.values.map((number, key) => {
+                      return (
+                        <option val={number} key={key}>
+                          {number}
+                        </option>
+                      )
+                    })}
+                  </select>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
 
-    { overTableSlot }
+      {overTableSlot}
 
-    <div className={`position-relative ${responsive && 'table-responsive' }`}>
-      <table className={classNames(tableClasses)}>
-        <thead>
-          { theadTopSlot }
-          { header && headerContent }
-          {
-            columnFilter && <tr className="table-sm">
-              {
-                rawColumnNames.map((colName, index)=>{
+      <div className={`position-relative ${responsive && 'table-responsive'}`}>
+        <table className={classNames(tableClasses)}>
+          <thead>
+            {theadTopSlot}
+            {header && headerContent}
+            {columnFilter && (
+              <tr className="table-sm">
+                {rawColumnNames.map((colName, index) => {
                   return (
                     <th className={classNames(headerClass(index))} key={index}>
-                      { columnFilterSlot[`${rawColumnNames[index]}`] ||
-                        ( (!fields || fields[index].filter !== false) &&
+                      {columnFilterSlot[`${rawColumnNames[index]}`] ||
+                        ((!fields || fields[index].filter !== false) && (
                           <input
                             className="form-control form-control-sm"
-                            onInput={e=>{columnFilterEvent(colName, e.target.value, 'input')}}
-                            onChange={e=>{columnFilterEvent(colName, e.target.value, 'change')}}
+                            onInput={(e) => {
+                              columnFilterEvent(colName, e.target.value, 'input')
+                            }}
+                            onChange={(e) => {
+                              columnFilterEvent(colName, e.target.value, 'change')
+                            }}
                             value={columnFilterState[colName] || ''}
                             aria-label={`column name: '${colName}' filter input`}
-                          />)
-                      }
+                          />
+                        ))}
                     </th>
                   )
-                })
-              }
-            </tr>
-          }
-        </thead>
-        <tbody style={clickableRows && { cursor: 'pointer' }}>
-          { currentItems.map((item, itemIndex) => {
-            return (
-              <React.Fragment key={itemIndex}>
-              <tr
-                className={classNames(item._classes)}
-                tabIndex={clickableRows && 0}
-                onClick={(e)=>{rowClicked(item, itemIndex + firstItemIndex, e)}}
-              >
-                {
-                  rawColumnNames.map((colName, index)=>{
-                    return (
-                      scopedSlots[colName] &&
-                      React.cloneElement(
-                        scopedSlots[colName](item, itemIndex + firstItemIndex),
-                        {'key': index}
-                      )
-                    ) ||
-                    <td
-                      className={classNames(cellClass(item, colName, index))}
-                      key={index}
-                    >
-                      { String(item[colName]) }
-                    </td>
-                  })
-                }
+                })}
               </tr>
-              {
-                scopedSlots.details &&
-                <tr
-                  onClick={(e)=>{rowClicked(item, itemIndex + firstItemIndex, e, true)}}
-                  className="p-0"
-                  style={{border: 'none !important'}}
-                  key={'details' + itemIndex}
-                >
-                  <td
-                    colSpan={colspan}
-                    className="p-0"
-                    style={{border: 'none !important'}}
+            )}
+          </thead>
+          <tbody style={clickableRows && { cursor: 'pointer' }}>
+            {currentItems.map((item, itemIndex) => {
+              return (
+                <React.Fragment key={itemIndex}>
+                  <tr
+                    className={classNames(item._classes)}
+                    tabIndex={clickableRows && 0}
+                    onClick={(e) => {
+                      rowClicked(item, itemIndex + firstItemIndex, e)
+                    }}
                   >
-                    { scopedSlots.details(item, itemIndex + firstItemIndex) }
-                  </td>
-                </tr>
-              }
-              </React.Fragment>
-            )
-          })}
-          {
-            !currentItems.length &&
-            <tr>
-              <td colSpan={colspan}>
-                { noItemsViewSlot ||
-                  <div className="text-center my-5">
-                    <h2>
-                      { noItemsText + ' ' }
-                      <CIcon
-                        width={30}
-                        icon={cilBan}
-                        className="text-danger"
-                      />
-                    </h2>
-                  </div>}
-              </td>
-            </tr>
-          }
-        </tbody>
-        { footer && currentItems.length > 0 && <tfoot>{headerContent}</tfoot>}
-        { footerSlot }
-        { captionSlot }
-      </table>
-      { loading &&
-        loadingSlot
-      }
-    </div>
+                    {rawColumnNames.map((colName, index) => {
+                      return (
+                        (scopedSlots[colName] &&
+                          React.cloneElement(
+                            scopedSlots[colName](item, itemIndex + firstItemIndex),
+                            { key: index },
+                          )) || (
+                          <td className={classNames(cellClass(item, colName, index))} key={index}>
+                            {String(item[colName])}
+                          </td>
+                        )
+                      )
+                    })}
+                  </tr>
+                  {scopedSlots.details && (
+                    <tr
+                      onClick={(e) => {
+                        rowClicked(item, itemIndex + firstItemIndex, e, true)
+                      }}
+                      className="p-0"
+                      style={{ border: 'none !important' }}
+                      key={'details' + itemIndex}
+                    >
+                      <td colSpan={colspan} className="p-0" style={{ border: 'none !important' }}>
+                        {scopedSlots.details(item, itemIndex + firstItemIndex)}
+                      </td>
+                    </tr>
+                  )}
+                </React.Fragment>
+              )
+            })}
+            {!currentItems.length && (
+              <tr>
+                <td colSpan={colspan}>
+                  {noItemsViewSlot || (
+                    <div className="text-center my-5">
+                      <h2>
+                        {noItemsText + ' '}
+                        <CIcon width={30} icon={cilBan} className="text-danger" />
+                      </h2>
+                    </div>
+                  )}
+                </td>
+              </tr>
+            )}
+          </tbody>
+          {footer && currentItems.length > 0 && <tfoot>{headerContent}</tfoot>}
+          {footerSlot}
+          {captionSlot}
+        </table>
+        {loading && loadingSlot}
+      </div>
 
-    { underTableSlot }
+      {underTableSlot}
 
-    { pagination &&
-      <CPaginationV3
-        style={{display: totalPages > 1 ? 'inline' : 'none'}}
-        onActivePageChange={(page) => { setPage(page) }}
-        pages={totalPages}
-        activePage={page}
-        {...paginationProps}
-      />
-    }
+      {pagination && (
+        <CPaginationV3
+          style={{ display: totalPages > 1 ? 'inline' : 'none' }}
+          onActivePageChange={(page) => {
+            setPage(page)
+          }}
+          pages={totalPages}
+          activePage={page}
+          {...paginationProps}
+        />
+      )}
     </React.Fragment>
   )
 }
