@@ -50,6 +50,8 @@ const CDataTable = (props) => {
     itemsPerPageSelect,
     sorterValue,
     columnFilterValue,
+    assignCleanFunc,
+    onFilteredChange,
     onRowClick,
     onSorterValueChange,
     onPaginationChange,
@@ -330,6 +332,14 @@ const CDataTable = (props) => {
   const isFiltered =
     tableFilterState || sorterState.column || Object.values(columnFilterState).join('')
 
+  useEffect(() => {
+    onFilteredChange && onFilteredChange(isFiltered)
+  }, [isFiltered])
+
+  useMemo(() => {
+    assignCleanFunc && assignCleanFunc(clean)
+  }, [assignCleanFunc])
+
   const cleanerProps = {
     icon: cilFilterX,
     className: `ms-2 ${isFiltered ? 'text-danger' : 'transparent'}`,
@@ -607,6 +617,8 @@ CDataTable.propTypes = {
   sorterValue: PropTypes.object,
   columnFilterValue: PropTypes.object,
   header: PropTypes.bool,
+  assignCleanFunc: PropTypes.func,
+  onFilteredChange: PropTypes.func,
   onRowClick: PropTypes.func,
   onSorterValueChange: PropTypes.func,
   onPaginationChange: PropTypes.func,
